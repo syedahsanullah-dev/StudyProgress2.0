@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
@@ -7,13 +7,16 @@ import AddLinkModal from '../components/forms/AddLinkModal';
 import AddGradeModal from '../components/forms/AddGradeModal';
 import EditSettingsModal from '../components/forms/EditSettingsModal';
 import WhatIfCalculator from '../components/ui/WhatIfCalculator';
-import { db, auth } from '../../firebase';
-import { doc, onSnapshot, collection, query, where, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
+import { db } from '../../firebase';
+import { doc, collection, query, where, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
 import { 
   ArrowLeft, Terminal, BookOpen, Link as LinkIcon, 
   Plus, FileText, Video, Code, Loader2, Trash2, Settings,
   HelpCircle, MessageSquare, AlertCircle, Star
 } from 'lucide-react';
+import useStore from '../store/useStore';
+
+import { useTransitionNavigate } from '../hooks/useTransitionNavigate';
 
 const getVUGPA = (percentage) => {
   if (percentage >= 85) return 4.00;
@@ -29,47 +32,22 @@ const getVUGPA = (percentage) => {
 
 export default function SubjectDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
 
-  const [subject, setSubject] = useState(null);
-  const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { subjects, assessments: allAssessments, loading } = useStore();
+  const subject = subjects.find(s => s.id === id);
+  const assessments = useMemo(() => {
+    return allAssessments
+      .filter(a => a.subjectId === id)
+      .sort((a, b) => b.createdAt - a.createdAt);
+  }, [allAssessments, id]);
+
   const [isUpdating, setIsUpdating] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
   const [isEditSettingsOpen, setIsEditSettingsOpen] = useState(false);
-
-  useEffect(() => {
-    if (!id) return;
-
-    const subjectRef = doc(db, 'subjects', id);
-    const unsubSubject = onSnapshot(subjectRef, (docSnap) => {
-      if (docSnap.exists()) {
-        setSubject({ id: docSnap.id, ...docSnap.data() });
-      } else {
-        if (isDeleting) return; 
-        setSubject({ name: "Unknown Subject", isCodingSubject: false, links: [] });
-      }
-      setLoading(false);
-    });
-
-    const q = query(collection(db, 'assessments'), where('subjectId', '==', id), where('userId', '==', auth.currentUser?.uid));
-    const unsubAssessments = onSnapshot(q, (querySnapshot) => {
-      const grades = [];
-      querySnapshot.forEach((doc) => {
-        grades.push({ id: doc.id, ...doc.data() });
-      });
-      grades.sort((a, b) => b.createdAt - a.createdAt);
-      setAssessments(grades);
-    });
-
-    return () => {
-      unsubSubject();
-      unsubAssessments();
-    };
-  }, [id, isDeleting]);
 
   // GPA and Stats Calculation
   const stats = useMemo(() => {
@@ -195,7 +173,7 @@ export default function SubjectDetail() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
             <div className="flex items-center gap-4">
               <button 
-                onClick={() => navigate(-1)}
+                onClick={() => transitionNavigate(-1)}
                 className="p-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl transition-colors"
               >
                 <ArrowLeft size={20} />

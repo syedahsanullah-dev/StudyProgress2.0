@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { Terminal, BookOpen, ChevronRight } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useTransitionNavigate } from '../../hooks/useTransitionNavigate';
 import ProgressBar from './ProgressBar';
 import Hover3D from './Hover3D';
 import gsap from 'gsap';
@@ -25,7 +25,7 @@ export default function SubjectCard({
   understandingCurrent = 0, understandingTotal = 10,
   customLabel
 }) {
-  const navigate = useNavigate();
+  const transitionNavigate = useTransitionNavigate();
   const cardRef = useRef();
 
   const { contextSafe } = useGSAP({ scope: cardRef });
@@ -74,7 +74,7 @@ export default function SubjectCard({
         ref={cardRef}
         onMouseEnter={onEnter}
         onMouseLeave={onLeave}
-        onClick={() => navigate(`/subjects/${id}`)}
+        onClick={() => transitionNavigate(`/subjects/${id}`)}
         className="subject-card bg-white/5 backdrop-blur-md border border-white/10 p-6 rounded-3xl cursor-pointer group shadow-lg flex flex-col justify-between min-h-[160px] h-full"
       >
         {/* Top Row: Icon, Title, and Grade Badge */}

@@ -2,10 +2,9 @@ import { useState, useEffect, useMemo, useRef } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import { Target, Loader2, ArrowRight } from 'lucide-react';
-import { db, auth } from '../../firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
+import useStore from '../store/useStore';
 
 gsap.registerPlugin(useGSAP);
 
@@ -32,41 +31,12 @@ const getVUGPA = (percentage) => {
 };
 
 export default function TargetCalculator() {
-  const [subjects, setSubjects] = useState([]);
-  const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { subjects, assessments, loading } = useStore();
   
   const [globalMode, setGlobalMode] = useState('target'); // 'target' | 'predict'
   const [targets, setTargets] = useState({});
   const [predictedScores, setPredictedScores] = useState({});
   const containerRef = useRef();
-
-  useEffect(() => {
-    const qSub = query(collection(db, 'subjects'), where("userId", "==", auth.currentUser.uid));
-    const unsubscribeSub = onSnapshot(qSub, (snapshot) => {
-      const subjectsData = [];
-      snapshot.forEach((doc) => {
-        subjectsData.push({ id: doc.id, ...doc.data() });
-      });
-      // Sort client-side to bypass Firebase composite index requirement
-      subjectsData.sort((a, b) => {
-        const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-        const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-        return timeA - timeB; // Ascending
-      });
-      setSubjects(subjectsData);
-      setLoading(false);
-    });
-
-    const qAss = query(collection(db, 'assessments'), where("userId", "==", auth.currentUser.uid));
-    const unsubscribeAss = onSnapshot(qAss, (snapshot) => {
-      const assData = [];
-      snapshot.forEach((doc) => assData.push({ id: doc.id, ...doc.data() }));
-      setAssessments(assData);
-    });
-
-    return () => { unsubscribeSub(); unsubscribeAss(); };
-  }, []);
 
   const processedData = useMemo(() => {
     let totalQualityPoints = 0;

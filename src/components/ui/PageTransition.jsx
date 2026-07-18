@@ -16,6 +16,9 @@ export function LoadingScreen({ id }) {
   }, []);
 
   useEffect(() => {
+    // Scroll to the top of the new page
+    window.scrollTo(0, 0);
+
     const overlay = document.getElementById('page-transition-overlay');
     if (overlay) {
       // Entrance Animation: Sweep the overlay OUT (upwards)

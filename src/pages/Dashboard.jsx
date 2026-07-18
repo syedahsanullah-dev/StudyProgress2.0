@@ -1,48 +1,22 @@
 import { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useTransitionNavigate } from '../hooks/useTransitionNavigate';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import CircularGauge from '../components/ui/CircularGauge';
 import ProgressBar from '../components/ui/ProgressBar';
 import { BookOpen, Terminal, TrendingUp, Loader2 } from 'lucide-react';
-import { db, auth } from '../../firebase';
-import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 import { Draggable } from 'gsap/Draggable';
+import useStore from '../store/useStore';
 
 gsap.registerPlugin(useGSAP, Draggable);
 
 export default function Dashboard() {
-  const [subjects, setSubjects] = useState([]);
-  const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
+  const { subjects, assessments, loading } = useStore();
+  const transitionNavigate = useTransitionNavigate();
   const dashboardRef = useRef();
-
-  // Fetch both Subjects and Assessments in real-time
-  useEffect(() => {
-    const qSubjects = query(collection(db, 'subjects'), where("userId", "==", auth.currentUser?.uid));
-    const unsubSubjects = onSnapshot(qSubjects, (snapshot) => {
-      const subs = [];
-      snapshot.forEach(doc => subs.push({ id: doc.id, ...doc.data() }));
-      setSubjects(subs);
-    });
-
-    const qAssessments = query(collection(db, 'assessments'), where("userId", "==", auth.currentUser?.uid));
-    const unsubAssessments = onSnapshot(qAssessments, (snapshot) => {
-      const asts = [];
-      snapshot.forEach(doc => asts.push({ id: doc.id, ...doc.data() }));
-      setAssessments(asts);
-      setLoading(false); // Once assessments load, we can render
-    });
-
-    return () => {
-      unsubSubjects();
-      unsubAssessments();
-    };
-  }, []);
 
   // GSAP Master Timeline for Dashboard Entrance
   useGSAP(() => {
@@ -262,7 +236,7 @@ export default function Dashboard() {
                 {subjects.map((sub) => (
                   <div 
                     key={sub.id}
-                    onClick={() => navigate(`/subjects/${sub.id}`)}
+                    onClick={() => transitionNavigate(`/subjects/${sub.id}`)}
                     className="active-subject-item opacity-0 bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center justify-between mb-3 gap-2">

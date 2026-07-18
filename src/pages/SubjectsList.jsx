@@ -1,62 +1,20 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import SubjectCard from '../components/ui/SubjectCard';
 import AddSubjectModal from '../components/forms/AddSubjectModal';
 import { Plus, Loader2, Library } from 'lucide-react';
-import { db, auth } from '../../firebase';
-import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import useStore from '../store/useStore';
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function SubjectsList() {
-  const [subjects, setSubjects] = useState([]);
-  const [assessments, setAssessments] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const { subjects, assessments, loading } = useStore();
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const containerRef = useRef();
-
-  // Real-time Firebase Listener for Subjects
-  useEffect(() => {
-    // We order by creation date so the newest subjects appear last
-    const q = query(
-      collection(db, 'subjects'), 
-      where("userId", "==", auth.currentUser.uid)
-    );
-    
-    const unsubscribeSub = onSnapshot(q, (snapshot) => {
-      const subs = [];
-      snapshot.forEach((doc) => {
-        subs.push({ id: doc.id, ...doc.data() });
-      });
-      // Sort client-side to bypass Firebase composite index requirement
-      subs.sort((a, b) => {
-        const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-        const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-        return timeA - timeB; // Ascending
-      });
-      setSubjects(subs);
-      setLoading(false);
-    });
-
-    const qAss = query(collection(db, 'assessments'), where("userId", "==", auth.currentUser.uid));
-    const unsubscribeAss = onSnapshot(qAss, (snapshot) => {
-      const assData = [];
-      snapshot.forEach((doc) => {
-        assData.push({ id: doc.id, ...doc.data() });
-      });
-      setAssessments(assData);
-    });
-
-    // Cleanup listener on unmount
-    return () => {
-      unsubscribeSub();
-      unsubscribeAss();
-    };
-  }, []);
 
   // GSAP ScrollTrigger Animation for Subject Cards
   useGSAP(() => {

@@ -12,6 +12,7 @@ import BulkEntry from './pages/BulkEntry';
 import TargetCalculator from './pages/TargetCalculator';
 import PageTransition, { LoadingScreen } from './components/ui/PageTransition';
 import BackgroundParallax from './components/ui/BackgroundParallax';
+import useStore from './store/useStore';
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -21,6 +22,13 @@ export default function App() {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
+      
+      if (currentUser) {
+        useStore.getState().initialize(currentUser.uid);
+      } else {
+        useStore.getState().clearStore();
+      }
+      
       setLoading(false);
     });
     return () => unsubscribe();
