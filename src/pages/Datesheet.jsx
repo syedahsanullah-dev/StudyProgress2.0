@@ -3,7 +3,7 @@ import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Calendar, Clock, CheckCircle } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, Clock3 } from 'lucide-react';
 
 gsap.registerPlugin(useGSAP);
 
@@ -36,6 +36,16 @@ export default function Datesheet() {
     { sr: 8, course: "MGT101 - Financial Accounting", date: "Friday, August 7, 2026", time: "Start Time: 06:30 pm", status: "CONFIRMED" },
   ];
 
+  const parseDateStr = (dateStr, timeStr) => {
+    const datePart = dateStr.replace(/^[a-zA-Z]+,\s*/, '');
+    const timePart = timeStr.replace('Start Time:', '').trim();
+    return new Date(`${datePart} ${timePart}`);
+  };
+
+  const sortedDatesheetData = [...datesheetData].sort((a, b) => {
+    return parseDateStr(a.date, a.time) - parseDateStr(b.date, b.time);
+  });
+
   return (
     <div className="min-h-screen bg-transparent flex">
       <Sidebar />
@@ -61,11 +71,11 @@ export default function Datesheet() {
                     <th className="py-4 px-4">My Courses</th>
                     <th className="py-4 px-4">Exam Dates</th>
                     <th className="py-4 px-4">Exam Time</th>
-                    <th className="py-4 px-4 text-right">Confirmation Status</th>
+                    <th className="py-4 px-4 text-right">Paper Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {datesheetData.map((exam, index) => (
+                  {sortedDatesheetData.map((exam, index) => (
                     <tr 
                       key={index} 
                       className={`datesheet-row border-b border-white/5 transition-colors group ${
@@ -89,10 +99,17 @@ export default function Datesheet() {
                         </div>
                       </td>
                       <td className="py-4 px-4 text-right">
-                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wide">
-                          <CheckCircle size={14} />
-                          {exam.status}
-                        </span>
+                        {new Date() > parseDateStr(exam.date, exam.time) ? (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wide">
+                            <CheckCircle size={14} />
+                            Done
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-bold tracking-wide">
+                            <Clock3 size={14} />
+                            Pending
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}
