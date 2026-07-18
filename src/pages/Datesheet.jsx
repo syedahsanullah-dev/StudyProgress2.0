@@ -68,7 +68,11 @@ export default function Datesheet() {
                   {datesheetData.map((exam, index) => (
                     <tr 
                       key={index} 
-                      className="datesheet-row border-b border-white/5 hover:bg-white/5 transition-colors group"
+                      className={`datesheet-row border-b border-white/5 transition-colors group ${
+                        exam.course.includes('(Practical)') 
+                          ? 'bg-amber-500/10 hover:bg-amber-500/20' 
+                          : 'hover:bg-white/5'
+                      }`}
                     >
                       <td className="py-4 px-4 text-slate-300">{exam.sr}</td>
                       <td className="py-4 px-4 text-white font-medium">{exam.course}</td>
