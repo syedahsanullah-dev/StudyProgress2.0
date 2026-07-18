@@ -29,10 +29,10 @@ export default function App() {
   // Show the cinematic transition screen while checking auth
   if (loading) {
     return (
-      <>
+      <Router>
         <BackgroundParallax />
         <LoadingScreen />
-      </>
+      </Router>
     );
   }
 
