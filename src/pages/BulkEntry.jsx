@@ -267,10 +267,10 @@ export default function BulkEntry() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex">
+    <div className="min-h-screen bg-transparent flex">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 min-h-screen">
         <TopNav title="Bulk Data Entry" />
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6">

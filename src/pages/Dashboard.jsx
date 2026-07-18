@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
@@ -8,12 +8,18 @@ import { BookOpen, Terminal, TrendingUp, Loader2 } from 'lucide-react';
 import { db, auth } from '../../firebase';
 import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+import { Draggable } from 'gsap/Draggable';
+
+gsap.registerPlugin(useGSAP, Draggable);
 
 export default function Dashboard() {
   const [subjects, setSubjects] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const dashboardRef = useRef();
 
   // Fetch both Subjects and Assessments in real-time
   useEffect(() => {
@@ -37,6 +43,53 @@ export default function Dashboard() {
       unsubAssessments();
     };
   }, []);
+
+  // GSAP Master Timeline for Dashboard Entrance
+  useGSAP(() => {
+    if (loading) return; // Only animate after loading is complete
+
+    const tl = gsap.timeline({ 
+      defaults: { ease: "power3.out" }, 
+      delay: 1.0,
+      onComplete: () => {
+        // Initialize Draggable on cards for fun interactive tossing
+        Draggable.create(".dashboard-card", {
+          type: "x,y",
+          edgeResistance: 0.65,
+          onRelease: function() {
+            // Wait 1.5 seconds, then Boing back to original position!
+            gsap.to(this.target, { 
+              x: 0, 
+              y: 0, 
+              delay: 1.5,
+              duration: 0.8, 
+              ease: "elastic.out(1, 0.4)" 
+            });
+          }
+        });
+      }
+    });
+
+    // 2. Animate main metric cards (3D Flip Reveal - Drawbridge up)
+    tl.fromTo(".dashboard-card", 
+      { opacity: 0, rotationX: 90, y: 50, transformPerspective: 1000, transformOrigin: "bottom center" }, 
+      { opacity: 1, rotationX: 0, y: 0, duration: 1.0, stagger: 0.2, ease: "back.out(1.5)" }
+    );
+
+    // 3. Animate Active Subjects header
+    tl.fromTo(".active-subjects-title",
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: "power3.out" },
+      "-=0.6"
+    );
+
+    // 4. Animate the mini subject cards (3D Flip Reveal - Falling tiles)
+    tl.fromTo(".active-subject-item",
+      { opacity: 0, rotationX: -90, transformPerspective: 1000, transformOrigin: "top center" },
+      { opacity: 1, rotationX: 0, duration: 0.8, stagger: 0.1, ease: "back.out(1.5)" },
+      "-=0.5"
+    );
+  }, { scope: dashboardRef, dependencies: [loading] });
 
   // --- Dynamic Calculations ---
 
@@ -120,7 +173,7 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex">
+      <div className="min-h-screen bg-transparent flex">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-indigo-500" size={40} />
@@ -130,10 +183,10 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex">
+    <div className="min-h-screen bg-transparent flex">
       <Sidebar />
 
-      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 min-h-screen" ref={dashboardRef}>
         <TopNav title="Dashboard" />
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full space-y-6">
@@ -141,7 +194,7 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             
             {/* GPA Predictor */}
-            <div className="col-span-1 md:col-span-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center shadow-xl">
+            <div className="dashboard-card opacity-0 col-span-1 md:col-span-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col items-center justify-center shadow-xl">
               <CircularGauge value={currentGPA} max={4.0} title="Current GPA" />
               
               <div className={`mt-4 flex items-center gap-2 px-4 py-2 rounded-full border ${
@@ -157,7 +210,7 @@ export default function Dashboard() {
             </div>
 
             {/* Progress Chart */}
-            <div className="col-span-1 md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-xl flex flex-col">
+            <div className="dashboard-card opacity-0 col-span-1 md:col-span-2 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 shadow-xl flex flex-col">
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-white tracking-wide">Subject Progress (%)</h2>
               </div>
@@ -198,10 +251,10 @@ export default function Dashboard() {
 
           {/* Active Subjects Section */}
           <div>
-            <h2 className="text-lg font-bold text-white tracking-wide mb-4 px-1">Active Subjects</h2>
+            <h2 className="active-subjects-title opacity-0 text-lg font-bold text-white tracking-wide mb-4 px-1">Active Subjects</h2>
             
             {subjects.length === 0 ? (
-              <div className="p-6 bg-white/5 border border-white/10 rounded-2xl text-center">
+              <div className="active-subject-item opacity-0 p-6 bg-white/5 border border-white/10 rounded-2xl text-center">
                 <p className="text-slate-400">Go to the Subjects tab to add your first class.</p>
               </div>
             ) : (
@@ -210,7 +263,7 @@ export default function Dashboard() {
                   <div 
                     key={sub.id}
                     onClick={() => navigate(`/subjects/${sub.id}`)}
-                    className="bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group"
+                    className="active-subject-item opacity-0 bg-white/5 border border-white/10 p-5 rounded-2xl hover:bg-white/10 transition-colors cursor-pointer group"
                   >
                     <div className="flex items-center justify-between mb-3 gap-2">
                       <div className="flex items-center gap-3 min-w-0 flex-1">

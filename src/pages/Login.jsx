@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { 
   signInWithEmailAndPassword, 
   createUserWithEmailAndPassword,
@@ -9,6 +9,10 @@ import {
 import { auth } from '../../firebase';
 import { User, Lock, ArrowRight, Loader2, Mail, Eye, EyeOff, AlertCircle, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP);
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -19,6 +23,14 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
   const navigate = useNavigate();
+  const cardRef = useRef();
+
+  useGSAP(() => {
+    gsap.fromTo(cardRef.current, 
+      { opacity: 0, scale: 0.95, y: 30 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.8, ease: "power3.out" }
+    );
+  });
 
   const getErrorMessage = (errorCode) => {
     switch (errorCode) {
@@ -98,7 +110,7 @@ export default function Login() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0F172A] bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-800 to-[#0F172A] p-4">
       
-      <div className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-white/20">
+      <div ref={cardRef} className="bg-white/10 backdrop-blur-md p-6 sm:p-8 rounded-3xl shadow-2xl w-full max-w-sm border border-white/20">
         
         <div className="flex justify-center mb-6">
           <div className="bg-indigo-500/20 p-4 rounded-2xl border border-indigo-500/30 shadow-inner">

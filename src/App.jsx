@@ -10,6 +10,9 @@ import SubjectsList from './pages/SubjectsList';
 import SubjectDetail from './pages/SubjectDetail';
 import BulkEntry from './pages/BulkEntry';
 import TargetCalculator from './pages/TargetCalculator';
+import PageTransition, { LoadingScreen } from './components/ui/PageTransition';
+import BackgroundParallax from './components/ui/BackgroundParallax';
+
 export default function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -23,18 +26,21 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
-  // Show a simple dark mode loading screen while checking auth
+  // Show the cinematic transition screen while checking auth
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      <>
+        <BackgroundParallax />
+        <LoadingScreen />
+      </>
     );
   }
 
   return (
     <Router>
-      <Routes>
+      <BackgroundParallax />
+      <PageTransition>
+        <Routes>
         {/* Public Route */}
         <Route 
           path="/login" 
@@ -73,6 +79,7 @@ export default function App() {
 
       
       </Routes>
+      </PageTransition>
     </Router>
   );
 }

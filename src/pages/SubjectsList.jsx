@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import SubjectCard from '../components/ui/SubjectCard';
@@ -6,12 +6,18 @@ import AddSubjectModal from '../components/forms/AddSubjectModal';
 import { Plus, Loader2, Library } from 'lucide-react';
 import { db, auth } from '../../firebase';
 import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP, ScrollTrigger);
 
 export default function SubjectsList() {
   const [subjects, setSubjects] = useState([]);
   const [assessments, setAssessments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const containerRef = useRef();
 
   // Real-time Firebase Listener for Subjects
   useEffect(() => {
@@ -51,6 +57,42 @@ export default function SubjectsList() {
       unsubscribeAss();
     };
   }, []);
+
+  // GSAP ScrollTrigger Animation for Subject Cards
+  useGSAP(() => {
+    if (loading || subjects.length === 0) return;
+
+    // Refresh ScrollTrigger after DOM changes
+    setTimeout(() => {
+      ScrollTrigger.refresh();
+
+      const cards = gsap.utils.toArray(".subject-card-wrapper");
+      
+      gsap.fromTo(cards, 
+        { 
+          opacity: 0, 
+          scale: 0.5,
+          rotation: () => gsap.utils.random(-20, 20),
+          y: 200,
+        },
+        {
+          opacity: 1,
+          scale: 1,
+          rotation: 0,
+          y: 0,
+          duration: 0.8,
+          delay: 1.0,
+          stagger: 0.15,
+          ease: "back.out(1.5)"
+        }
+      );
+    }, 100);
+
+    return () => {
+      ScrollTrigger.getAll().forEach(t => t.kill());
+    };
+  }, { scope: containerRef, dependencies: [loading, subjects.length] });
+
 
   const getVUGPA = (percentage) => {
     if (percentage >= 85) return 4.00;
@@ -108,13 +150,13 @@ export default function SubjectsList() {
   });
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex">
+    <div className="min-h-screen bg-transparent flex">
       
       {/* Navigation */}
       <Sidebar />
 
       {/* Main Content Area */}
-      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 min-h-screen" ref={containerRef}>
         <TopNav title="My Subjects" />
 
         <div className="p-4 sm:p-8 max-w-7xl mx-auto w-full">
@@ -159,11 +201,12 @@ export default function SubjectsList() {
             /* Responsive Grid of Subject Cards */
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {subjectsWithGPA.map((sub) => (
-                <SubjectCard 
-                  key={sub.id}
-                  {...sub} /* Passes all the new detailed VU fields down to the card */
-                  customLabel={sub.isCodingSubject ? "Coding Exercises" : "Lectures & Handouts"}
-                />
+                <div key={sub.id} className="subject-card-wrapper opacity-0">
+                  <SubjectCard 
+                    {...sub} /* Passes all the new detailed VU fields down to the card */
+                    customLabel={sub.isCodingSubject ? "Coding Exercises" : "Lectures & Handouts"}
+                  />
+                </div>
               ))}
             </div>
           )}

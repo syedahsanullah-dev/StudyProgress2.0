@@ -1,9 +1,13 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef } from 'react';
 import Sidebar from '../components/layout/Sidebar';
 import TopNav from '../components/layout/TopNav';
 import { Target, Loader2, ArrowRight } from 'lucide-react';
 import { db, auth } from '../../firebase';
-import { collection, onSnapshot, query, orderBy, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP);
 
 const TARGET_GRADES = [
   { label: 'A (4.00)', value: 4.00, percent: 85 },
@@ -35,6 +39,7 @@ export default function TargetCalculator() {
   const [globalMode, setGlobalMode] = useState('target'); // 'target' | 'predict'
   const [targets, setTargets] = useState({});
   const [predictedScores, setPredictedScores] = useState({});
+  const containerRef = useRef();
 
   useEffect(() => {
     const qSub = query(collection(db, 'subjects'), where("userId", "==", auth.currentUser.uid));
@@ -115,6 +120,26 @@ export default function TargetCalculator() {
     return { parsedSubjects, currentCGPA, totalCreditHours };
   }, [subjects, assessments]);
 
+  // GSAP Entrance Animation
+  useGSAP(() => {
+    if (loading || processedData.parsedSubjects.length === 0) return;
+
+    const tl = gsap.timeline({ defaults: { ease: "power3.out" }, delay: 1.0 });
+
+    // Animate the main header banner
+    tl.fromTo(".calc-banner",
+      { opacity: 0, scale: 0.95, y: 20 },
+      { opacity: 1, scale: 1, y: 0, duration: 0.8 }
+    );
+
+    // Animate the list items
+    tl.fromTo(".calc-item",
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.5, stagger: 0.1 },
+      "-=0.4"
+    );
+  }, { scope: containerRef, dependencies: [loading, processedData.parsedSubjects.length] });
+
   // Init default targets and predicted scores
   useEffect(() => {
     if (processedData.parsedSubjects.length > 0) {
@@ -175,7 +200,7 @@ export default function TargetCalculator() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex">
+      <div className="min-h-screen bg-transparent flex">
         <Sidebar />
         <div className="flex-1 flex items-center justify-center">
           <Loader2 className="animate-spin text-indigo-500" size={40} />
@@ -185,14 +210,14 @@ export default function TargetCalculator() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] flex">
+    <div className="min-h-screen bg-transparent flex">
       <Sidebar />
-      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col sm:ml-20 pb-20 sm:pb-0 min-h-screen" ref={containerRef}>
         <TopNav title="Sandbox Calculator" />
 
         <div className="p-4 sm:p-8 max-w-5xl mx-auto w-full space-y-8">
           
-          <div className="bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+          <div className="calc-banner opacity-0 bg-gradient-to-r from-indigo-600 to-violet-600 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
             <div className="absolute top-0 right-0 p-8 opacity-10">
               <Target size={120} />
             </div>
@@ -217,7 +242,7 @@ export default function TargetCalculator() {
           </div>
 
           <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="calc-item opacity-0 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <h2 className="text-xl font-bold text-slate-200">Set Individual Targets</h2>
               <div className="flex bg-slate-800/50 p-1 rounded-xl">
                 <button 
@@ -261,7 +286,7 @@ export default function TargetCalculator() {
                 }
 
                 return (
-                  <div key={sub.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in">
+                  <div key={sub.id} className="calc-item opacity-0 bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-white mb-1">{sub.name}</h3>
                       <div className="flex items-center gap-3 text-sm">
@@ -300,7 +325,7 @@ export default function TargetCalculator() {
                 const isComplete = sub.remainingWeight <= 0;
 
                 return (
-                  <div key={sub.id} className="bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4 animate-in fade-in">
+                  <div key={sub.id} className="calc-item opacity-0 bg-white/5 border border-white/10 rounded-2xl p-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-white mb-1">{sub.name}</h3>
                       <div className="flex items-center gap-3 text-sm">

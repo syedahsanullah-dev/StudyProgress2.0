@@ -1,4 +1,9 @@
+import { useRef } from 'react';
 import { Minus, Plus } from 'lucide-react';
+import gsap from 'gsap';
+import { useGSAP } from '@gsap/react';
+
+gsap.registerPlugin(useGSAP);
 
 export default function ProgressBar({ 
   current = 0, 
@@ -15,6 +20,34 @@ export default function ProgressBar({
   
   // Is it fully complete?
   const isComplete = percentage === 100;
+
+  const barRef = useRef();
+  const textRef = useRef();
+
+  useGSAP(() => {
+    // Animate the bar width
+    gsap.to(barRef.current, {
+      width: `${percentage}%`,
+      duration: 1.5,
+      delay: 2.2,
+      ease: "power3.out"
+    });
+
+    // Animate the number counting
+    const counter = { val: parseFloat(textRef.current?.innerText?.split(' ')[0]) || 0 };
+    gsap.to(counter, {
+      val: current,
+      duration: 1.5,
+      delay: 2.2,
+      ease: "power3.out",
+      onUpdate: () => {
+        if (textRef.current) {
+          textRef.current.innerText = `${Math.round(counter.val)} / ${total}`;
+        }
+      }
+    });
+
+  }, { dependencies: [percentage, current, total] });
 
   return (
     <div className="w-full">
@@ -40,7 +73,10 @@ export default function ProgressBar({
 
           {/* Fraction text */}
           {showFraction && (
-            <span className={`text-sm w-12 text-center font-bold ${isComplete ? 'text-emerald-400' : 'text-slate-400'}`}>
+            <span 
+              ref={textRef}
+              className={`text-sm w-12 text-center font-bold ${isComplete ? 'text-emerald-400' : 'text-slate-400'}`}
+            >
               {current} / {total}
             </span>
           )}
@@ -63,12 +99,13 @@ export default function ProgressBar({
         
         {/* The Animated Fill */}
         <div 
-          className={`h-full rounded-full transition-all duration-500 ease-out ${
+          ref={barRef}
+          className={`h-full rounded-full ${
             isComplete 
               ? 'bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]' 
               : 'bg-indigo-500'
           }`}
-          style={{ width: `${percentage}%` }}
+          style={{ width: '0%' }} // Initial width for GSAP to animate from
         />
       </div>
     </div>
