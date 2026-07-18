@@ -1,0 +1,656 @@
+[
+  {
+    "name": "CS603P - Software Architecture and Design (Practical)",
+    "isCodingSubject": true,
+    "lecturesTotal": 16,
+    "handoutsTotal": 16,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment No. 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No. 2",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Lab Quiz 1",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 2",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 3",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 2",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 4",
+        "type": "Quiz",
+        "scoreReceived": 3,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 5",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 6",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 7",
+        "type": "Quiz",
+        "scoreReceived": 4,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 8",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 9",
+        "type": "Quiz",
+        "scoreReceived": 4,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 3",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 10",
+        "type": "Quiz",
+        "scoreReceived": 4,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 4",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 15,
+      "Assignment": 25,
+      "GDB": 0,
+      "Midterm": 0,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 1
+  },
+  {
+    "name": "CS311 - Introduction to Web Services Development",
+    "isCodingSubject": true,
+    "lecturesTotal": 20,
+    "handoutsTotal": 20,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Graded Discussion Board - Scenario",
+        "type": "GDB",
+        "scoreReceived": 3.75,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Assignment No. 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No. 2",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Quiz No. 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 2",
+        "type": "Quiz",
+        "scoreReceived": 8,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 3",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 4",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Midterm Result",
+        "type": "Midterm",
+        "scoreReceived": 23.49,
+        "totalPossibleScore": 30
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 10,
+      "Assignment": 10,
+      "GDB": 0,
+      "Midterm": 20,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 3
+  },
+  {
+    "name": "CS403P - Database Management Systems (Practical)",
+    "isCodingSubject": true,
+    "lecturesTotal": 16,
+    "handoutsTotal": 16,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment No 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No 2",
+        "type": "Assignment",
+        "scoreReceived": 18,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Lab Attendance Quiz No. 1",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 2",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Graded Quiz No. 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Attendance Quiz No. 3",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 4",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 5",
+        "type": "Quiz",
+        "scoreReceived": 6,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Graded Quiz No. 2",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Attendance Quiz No. 6",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 7",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 8",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 9",
+        "type": "Quiz",
+        "scoreReceived": 7,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Lab Attendance Quiz No. 10",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 7
+      },
+      {
+        "title": "Graded Quiz No. 3",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Graded Quiz No. 4",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 25,
+      "Assignment": 15,
+      "GDB": 0,
+      "Midterm": 0,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 1
+  },
+  {
+    "name": "CS603 - Software Architecture and Design",
+    "isCodingSubject": true,
+    "lecturesTotal": 16,
+    "handoutsTotal": 16,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment No. 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No. 2",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Quiz 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz 2",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz 3",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz 4",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "GDB",
+        "type": "GDB",
+        "scoreReceived": 3.75,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Midterm Result",
+        "type": "Midterm",
+        "scoreReceived": 21.26,
+        "totalPossibleScore": 30
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 10,
+      "Assignment": 10,
+      "GDB": 0,
+      "Midterm": 20,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 3
+  },
+  {
+    "name": "MGT101 - Financial Accounting",
+    "isCodingSubject": false,
+    "lecturesTotal": 16,
+    "handoutsTotal": 16,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment # 1",
+        "type": "Assignment",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "GDB",
+        "type": "GDB",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Quiz-01",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz-02",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz-03",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Midterm Result",
+        "type": "Midterm",
+        "scoreReceived": 24.45,
+        "totalPossibleScore": 30
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 10,
+      "Assignment": 10,
+      "GDB": 0,
+      "Midterm": 20,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 3
+  },
+  {
+    "name": "CS304P - Object Oriented Programming (Practical)",
+    "isCodingSubject": true,
+    "lecturesTotal": 16,
+    "handoutsTotal": 16,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment No. 1",
+        "type": "Assignment",
+        "scoreReceived": 18,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No. 2",
+        "type": "Assignment",
+        "scoreReceived": 17,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Lab Quiz 1",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 2",
+        "type": "Quiz",
+        "scoreReceived": 4,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 3",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 1",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 4",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 5",
+        "type": "Quiz",
+        "scoreReceived": 4,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 6",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 02",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 7",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 8",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Lab Quiz 9",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 03",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Lab Quiz 10",
+        "type": "Quiz",
+        "scoreReceived": 5,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz 04",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 15,
+      "Assignment": 25,
+      "GDB": 0,
+      "Midterm": 0,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 1
+  },
+  {
+    "name": "CS611 - Software Quality Engineering",
+    "isCodingSubject": true,
+    "lecturesTotal": 10,
+    "handoutsTotal": 10,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment no 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment no 2",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "GDB",
+        "type": "GDB",
+        "scoreReceived": 3.75,
+        "totalPossibleScore": 5
+      },
+      {
+        "title": "Graded Quiz No 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Graded Quiz No 2",
+        "type": "Quiz",
+        "scoreReceived": 8,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Graded Quiz No 3",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Graded Quiz No 4",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Midterm Result",
+        "type": "Midterm",
+        "scoreReceived": 19.44,
+        "totalPossibleScore": 30
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 5,
+      "Assignment": 10,
+      "GDB": 5,
+      "Midterm": 20,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 3
+  },
+  {
+    "name": "CS615 - Software Project Management",
+    "isCodingSubject": true,
+    "lecturesTotal": 45,
+    "handoutsTotal": 45,
+    "understandingTotal": 10,
+    "assessments": [
+      {
+        "title": "Assignment No. 1",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Assignment No. 2",
+        "type": "Assignment",
+        "scoreReceived": 20,
+        "totalPossibleScore": 20
+      },
+      {
+        "title": "Quiz No. 1",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 2",
+        "type": "Quiz",
+        "scoreReceived": 10,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 3",
+        "type": "Quiz",
+        "scoreReceived": 8,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Quiz No. 4",
+        "type": "Quiz",
+        "scoreReceived": 9,
+        "totalPossibleScore": 10
+      },
+      {
+        "title": "Midterm Result",
+        "type": "Midterm",
+        "scoreReceived": 23.51,
+        "totalPossibleScore": 30
+      }
+    ],
+    "gradingScheme": {
+      "Quiz": 10,
+      "Assignment": 10,
+      "GDB": 0,
+      "Midterm": 20,
+      "Final": 60,
+      "Project": 0
+    },
+    "creditHours": 3
+  }
+]
