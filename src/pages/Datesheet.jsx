@@ -38,13 +38,45 @@ export default function Datesheet() {
 
   const parseDateStr = (dateStr, timeStr) => {
     const datePart = dateStr.replace(/^[a-zA-Z]+,\s*/, '');
-    const timePart = timeStr.replace('Start Time:', '').trim();
+    const timePart = timeStr === 'All Day' ? '00:00' : timeStr.replace('Start Time:', '').trim();
     return new Date(`${datePart} ${timePart}`);
   };
 
-  const sortedDatesheetData = [...datesheetData].sort((a, b) => {
+  const sortedExams = [...datesheetData].sort((a, b) => {
     return parseDateStr(a.date, a.time) - parseDateStr(b.date, b.time);
   });
+
+  const fullSchedule = [];
+  if (sortedExams.length > 0) {
+    const firstDate = parseDateStr(sortedExams[0].date, sortedExams[0].time);
+    const lastDate = parseDateStr(sortedExams[sortedExams.length - 1].date, sortedExams[sortedExams.length - 1].time);
+    
+    firstDate.setHours(0, 0, 0, 0);
+    lastDate.setHours(0, 0, 0, 0);
+
+    let currentDate = new Date(firstDate);
+    while (currentDate <= lastDate) {
+      const examsOnThisDay = sortedExams.filter(exam => {
+        const examDate = parseDateStr(exam.date, exam.time);
+        examDate.setHours(0, 0, 0, 0);
+        return examDate.getTime() === currentDate.getTime();
+      });
+
+      if (examsOnThisDay.length > 0) {
+        fullSchedule.push(...examsOnThisDay);
+      } else {
+        const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+        fullSchedule.push({
+          isPreparationDay: true,
+          sr: "-",
+          course: "Preparation Day",
+          date: currentDate.toLocaleDateString('en-US', options),
+          time: "All Day"
+        });
+      }
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-transparent flex">
@@ -67,25 +99,24 @@ export default function Datesheet() {
               <table className="w-full text-left border-collapse">
                 <thead>
                   <tr className="border-b border-white/10 text-slate-400 text-sm font-medium">
-                    <th className="py-4 px-4">Sr. No.</th>
                     <th className="py-4 px-4">My Courses</th>
                     <th className="py-4 px-4">Exam Dates</th>
                     <th className="py-4 px-4">Exam Time</th>
-                    <th className="py-4 px-4 text-right">Paper Status</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {sortedDatesheetData.map((exam, index) => (
+                  {fullSchedule.map((exam, index) => (
                     <tr 
                       key={index} 
                       className={`datesheet-row border-b border-white/5 transition-colors group ${
-                        exam.course.includes('(Practical)') 
-                          ? 'bg-amber-500/10 hover:bg-amber-500/20' 
-                          : 'hover:bg-white/5'
+                        exam.isPreparationDay
+                          ? 'bg-blue-500/10 hover:bg-blue-500/20'
+                          : exam.course.includes('(Practical)') 
+                            ? 'bg-amber-500/10 hover:bg-amber-500/20' 
+                            : 'hover:bg-white/5'
                       }`}
                     >
-                      <td className="py-4 px-4 text-slate-300">{exam.sr}</td>
-                      <td className="py-4 px-4 text-white font-medium">{exam.course}</td>
+                      <td className={`py-4 px-4 font-medium ${exam.isPreparationDay ? 'text-blue-400' : 'text-white'}`}>{exam.course}</td>
                       <td className="py-4 px-4 text-slate-300">
                         <div className="flex items-center gap-2">
                           <Calendar size={14} className="text-slate-500 group-hover:text-indigo-400 transition-colors" />
@@ -97,19 +128,6 @@ export default function Datesheet() {
                           <Clock size={14} className="text-slate-500 group-hover:text-amber-400 transition-colors" />
                           {exam.time}
                         </div>
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        {new Date() > parseDateStr(exam.date, exam.time) ? (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-bold tracking-wide">
-                            <CheckCircle size={14} />
-                            Done
-                          </span>
-                        ) : (
-                          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-xs font-bold tracking-wide">
-                            <Clock3 size={14} />
-                            Pending
-                          </span>
-                        )}
                       </td>
                     </tr>
                   ))}
