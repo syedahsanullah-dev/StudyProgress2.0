@@ -44,7 +44,7 @@ export default function ScrambleText({ text, delay = 0, className = "" }) {
             queue[i].char = char;
           }
           // Wrap the active scramble character in a styled span
-          output += `<span class="text-indigo-400 opacity-80">${char}</span>`;
+          output += `<span class="opacity-80">${char}</span>`;
         } else {
           output += `<span class="opacity-50">${from}</span>`; // Keep the frozen initial character dimmed
         }

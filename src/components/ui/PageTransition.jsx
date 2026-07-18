@@ -1,8 +1,31 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import gsap from 'gsap';
+import ScrambleText from './ScrambleText';
+import TypewriterText from './TypewriterText';
 
 export function LoadingScreen({ id }) {
+  const location = useLocation();
+  const [animationKey, setAnimationKey] = useState(0);
+
+  // Reset animations exactly when the sweep-down starts
+  useEffect(() => {
+    const handleStart = () => setAnimationKey(prev => prev + 1);
+    window.addEventListener('transition-start', handleStart);
+    return () => window.removeEventListener('transition-start', handleStart);
+  }, []);
+
+  useEffect(() => {
+    const overlay = document.getElementById('page-transition-overlay');
+    if (overlay) {
+      // Entrance Animation: Sweep the overlay OUT (upwards)
+      gsap.fromTo(overlay,
+        { yPercent: 0 },
+        { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.8 }
+      );
+    }
+  }, [location.pathname]);
+
   return (
       <div 
         id={id}
@@ -38,20 +61,12 @@ export function LoadingScreen({ id }) {
         <div className="absolute top-[75%] left-[60%] text-indigo-400/20 font-mono text-2xl font-black -rotate-[5deg] select-none tracking-tighter">sudo</div>
 
         {/* Central Code Element */}
-        <div className="relative z-10 flex flex-col items-center text-blue-400 font-mono">
-          <div 
-            className="relative inline-block text-7xl sm:text-9xl font-extrabold tracking-tighter mb-4 glitch drop-shadow-[0_0_25px_rgba(96,165,250,1)]"
-            data-text="< _ />"
-            style={{ textShadow: "0 0 30px rgba(59, 130, 246, 1), 0 0 60px rgba(59, 130, 246, 0.8)" }}
-          >
+        <div className="relative z-10 flex flex-col items-center font-mono text-blue-400">
+          <div className="relative inline-block text-7xl sm:text-9xl font-extrabold tracking-tighter mb-4 animate-scale-pulse">
             &lt; _ /&gt;
           </div>
-          <div 
-            className="relative inline-block text-sm sm:text-2xl mt-4 text-blue-300 tracking-[0.3em] font-bold uppercase glitch"
-            data-text="Compiling Module..."
-            style={{ textShadow: "0 0 15px rgba(59, 130, 246, 0.8), 0 0 30px rgba(59, 130, 246, 0.6)" }}
-          >
-            Compiling Module...
+          <div className="relative inline-block text-sm sm:text-2xl mt-4 tracking-[0.3em] font-bold uppercase text-blue-300">
+            <TypewriterText key={animationKey} text="> Compiling Module..." delay={1.1} speed={25} />
           </div>
         </div>
       </div>
@@ -67,7 +82,7 @@ export default function PageTransition({ children }) {
       // Entrance Animation: Sweep the overlay OUT (upwards)
       gsap.fromTo(overlay,
         { yPercent: 0 },
-        { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.1 }
+        { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.8 }
       );
     }
   }, [location.pathname]);

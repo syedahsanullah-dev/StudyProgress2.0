@@ -7,6 +7,9 @@ export function useTransitionNavigate() {
   return (to) => {
     const overlay = document.getElementById('page-transition-overlay');
     
+    // Tell the overlay to reset its typing animations immediately
+    window.dispatchEvent(new Event('transition-start'));
+    
     if (overlay) {
       // Leave Animation: Sweep the overlay UP from the bottom
       gsap.fromTo(overlay,

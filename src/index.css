@@ -61,3 +61,35 @@ body {
   text-shadow: -2px 0 #06b6d4; /* cyan */
   animation: glitch-anim 3s infinite linear alternate-reverse;
 }
+
+/* Performant Laser Sweep (Shimmer) */
+@keyframes shimmer-sweep {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.5) 0%,
+    rgba(255, 255, 255, 1) 50%,
+    rgba(59, 130, 246, 0.5) 100%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shimmer-sweep 2.5s linear infinite;
+  will-change: background-position;
+}
+
+/* Big and Small Scaling Pulse */
+@keyframes scale-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
+
+.animate-scale-pulse {
+  animation: scale-pulse 1.5s ease-in-out infinite;
+  will-change: transform;
+}
