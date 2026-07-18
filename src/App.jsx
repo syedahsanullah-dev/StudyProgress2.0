@@ -10,6 +10,7 @@ import SubjectsList from './pages/SubjectsList';
 import SubjectDetail from './pages/SubjectDetail';
 import BulkEntry from './pages/BulkEntry';
 import TargetCalculator from './pages/TargetCalculator';
+import Datesheet from './pages/Datesheet';
 import PageTransition, { LoadingScreen } from './components/ui/PageTransition';
 import BackgroundParallax from './components/ui/BackgroundParallax';
 import useStore from './store/useStore';
@@ -77,6 +78,11 @@ export default function App() {
         <Route 
           path="/calculator" 
           element={user ? <TargetCalculator /> : <Navigate to="/login" />} 
+        />
+        
+        <Route 
+          path="/datesheet" 
+          element={user ? <Datesheet /> : <Navigate to="/login" />} 
         />
         
         {/* Fallback Route */}
