@@ -18,16 +18,21 @@ export default function SubjectsList() {
     // We order by creation date so the newest subjects appear last
     const q = query(
       collection(db, 'subjects'), 
-      where("userId", "==", auth.currentUser.uid), 
-      orderBy('createdAt', 'asc')
+      where("userId", "==", auth.currentUser.uid)
     );
     
     const unsubscribeSub = onSnapshot(q, (snapshot) => {
-      const subjectsData = [];
+      const subs = [];
       snapshot.forEach((doc) => {
-        subjectsData.push({ id: doc.id, ...doc.data() });
+        subs.push({ id: doc.id, ...doc.data() });
       });
-      setSubjects(subjectsData);
+      // Sort client-side to bypass Firebase composite index requirement
+      subs.sort((a, b) => {
+        const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return timeA - timeB; // Ascending
+      });
+      setSubjects(subs);
       setLoading(false);
     });
 

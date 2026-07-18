@@ -37,10 +37,18 @@ export default function TargetCalculator() {
   const [predictedScores, setPredictedScores] = useState({});
 
   useEffect(() => {
-    const qSub = query(collection(db, 'subjects'), where("userId", "==", auth.currentUser.uid), orderBy('createdAt', 'asc'));
+    const qSub = query(collection(db, 'subjects'), where("userId", "==", auth.currentUser.uid));
     const unsubscribeSub = onSnapshot(qSub, (snapshot) => {
       const subjectsData = [];
-      snapshot.forEach((doc) => subjectsData.push({ id: doc.id, ...doc.data() }));
+      snapshot.forEach((doc) => {
+        subjectsData.push({ id: doc.id, ...doc.data() });
+      });
+      // Sort client-side to bypass Firebase composite index requirement
+      subjectsData.sort((a, b) => {
+        const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+        const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+        return timeA - timeB; // Ascending
+      });
       setSubjects(subjectsData);
       setLoading(false);
     });
