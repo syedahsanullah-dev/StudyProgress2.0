@@ -3,6 +3,9 @@ import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
 
 export default function BackgroundParallax() {
+  const isEnabled = localStorage.getItem('enableParallax') !== 'false';
+  if (!isEnabled) return null;
+
   return (
     <div className="fixed inset-0 pointer-events-none z-[-1] overflow-hidden bg-[#0F172A]">
       {/* Constellation of Glitching Tech Typography */}

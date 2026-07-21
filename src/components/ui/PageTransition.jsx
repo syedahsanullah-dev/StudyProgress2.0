@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import gsap from 'gsap';
 import ScrambleText from './ScrambleText';
 import TypewriterText from './TypewriterText';
 
-export function LoadingScreen({ id }) {
+export function LoadingScreen({ id, skipInitialAnimation = false }) {
   const location = useLocation();
   const [animationKey, setAnimationKey] = useState(0);
+  const isFirstMount = useRef(true);
 
   // Reset animations exactly when the sweep-down starts
   useEffect(() => {
@@ -21,18 +22,23 @@ export function LoadingScreen({ id }) {
 
     const overlay = document.getElementById('page-transition-overlay');
     if (overlay) {
-      // Entrance Animation: Sweep the overlay OUT (upwards)
-      gsap.fromTo(overlay,
-        { yPercent: 0 },
-        { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.8 }
-      );
+      if (isFirstMount.current && skipInitialAnimation) {
+        gsap.set(overlay, { yPercent: -100 });
+      } else {
+        // Entrance Animation: Sweep the overlay OUT (upwards)
+        gsap.fromTo(overlay,
+          { yPercent: 0 },
+          { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.8 }
+        );
+      }
+      isFirstMount.current = false;
     }
-  }, [location.pathname]);
+  }, [location.pathname, skipInitialAnimation]);
 
   return (
       <div 
         id={id}
-        className="fixed inset-0 z-[99999] bg-[#0A0F1C] pointer-events-none flex flex-col items-center justify-center overflow-hidden border-b-2 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.3)]"
+        className={`fixed inset-0 z-[99999] bg-[#0A0F1C] pointer-events-none flex flex-col items-center justify-center overflow-hidden border-b-2 border-blue-500 shadow-[0_0_50px_rgba(59,130,246,0.3)] ${isFirstMount.current && skipInitialAnimation ? '-translate-y-full' : ''}`}
       >
         {/* Blueprint / Tech Grid Pattern */}
         <div 
@@ -76,23 +82,16 @@ export function LoadingScreen({ id }) {
   );
 }
 
-export default function PageTransition({ children }) {
-  const location = useLocation();
+export default function PageTransition({ children, skipInitialAnimation = false }) {
+  const isEnabled = localStorage.getItem('enablePageTransitions') !== 'false';
 
-  useEffect(() => {
-    const overlay = document.getElementById('page-transition-overlay');
-    if (overlay) {
-      // Entrance Animation: Sweep the overlay OUT (upwards)
-      gsap.fromTo(overlay,
-        { yPercent: 0 },
-        { yPercent: -100, duration: 1.2, ease: "power4.inOut", delay: 0.8 }
-      );
-    }
-  }, [location.pathname]);
+  if (!isEnabled) {
+    return <>{children}</>;
+  }
 
   return (
     <>
-      <LoadingScreen id="page-transition-overlay" />
+      <LoadingScreen id="page-transition-overlay" skipInitialAnimation={skipInitialAnimation} />
       {children}
     </>
   );

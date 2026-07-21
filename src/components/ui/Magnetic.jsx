@@ -8,6 +8,9 @@ export default function Magnetic({ children }) {
     const element = ref.current;
     if (!element) return;
 
+    const isEnabled = localStorage.getItem('enableSidebarAnimations') !== 'false';
+    if (!isEnabled) return;
+
     const xTo = gsap.quickTo(element, "x", { duration: 1, ease: "elastic.out(1, 0.3)" });
     const yTo = gsap.quickTo(element, "y", { duration: 1, ease: "elastic.out(1, 0.3)" });
 

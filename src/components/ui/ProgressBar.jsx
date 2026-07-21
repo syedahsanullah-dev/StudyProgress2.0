@@ -25,6 +25,14 @@ export default function ProgressBar({
   const textRef = useRef();
 
   useGSAP(() => {
+    const isEnabled = localStorage.getItem('enableProgressAnimations') !== 'false';
+
+    if (!isEnabled) {
+      gsap.set(barRef.current, { width: `${percentage}%` });
+      if (textRef.current) textRef.current.innerText = `${current} / ${total}`;
+      return;
+    }
+
     // Animate the bar width
     gsap.to(barRef.current, {
       width: `${percentage}%`,

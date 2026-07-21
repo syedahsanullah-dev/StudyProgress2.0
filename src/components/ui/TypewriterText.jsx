@@ -23,6 +23,16 @@ export default function TypewriterText({ text, delay = 0, speed = 50, className 
     return () => clearInterval(interval);
   }, [text, delay, speed, started]);
 
+  const isEnabled = localStorage.getItem('enableTextAnimations') !== 'false';
+  
+  if (!isEnabled) {
+    return (
+      <span className={`inline-block ${className}`}>
+        {text}
+      </span>
+    );
+  }
+
   return (
     <span className={`inline-block ${className}`}>
       {displayedText}

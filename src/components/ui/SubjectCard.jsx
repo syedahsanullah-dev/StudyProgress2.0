@@ -29,8 +29,11 @@ export default function SubjectCard({
   const cardRef = useRef();
 
   const { contextSafe } = useGSAP({ scope: cardRef });
+  
+  const isEnabled = localStorage.getItem('enableCardAnimations') !== 'false';
 
   const onEnter = contextSafe(() => {
+    if (!isEnabled) return;
     gsap.to(cardRef.current, { 
       scale: 1.05, 
       z: 50, // Pop out slightly
@@ -42,6 +45,7 @@ export default function SubjectCard({
   });
 
   const onLeave = contextSafe(() => {
+    if (!isEnabled) return;
     gsap.to(cardRef.current, { 
       scale: 1, 
       z: 0,

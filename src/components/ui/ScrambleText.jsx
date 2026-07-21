@@ -13,6 +13,12 @@ export default function ScrambleText({ text, delay = 0, className = "" }) {
   );
 
   useEffect(() => {
+    const isEnabled = localStorage.getItem('enableTextAnimations') !== 'false';
+    if (!isEnabled) {
+      if (textRef.current) textRef.current.innerHTML = text;
+      return;
+    }
+
     if (!textRef.current) return;
 
     let frame = 0;
@@ -74,5 +80,7 @@ export default function ScrambleText({ text, delay = 0, className = "" }) {
     };
   }, [text, delay, initialScramble]);
 
-  return <span ref={textRef} className={`inline-block ${className}`}>{initialScramble}</span>;
+  const isEnabled = localStorage.getItem('enableTextAnimations') !== 'false';
+
+  return <span ref={textRef} className={`inline-block ${className}`}>{isEnabled ? initialScramble : text}</span>;
 }

@@ -8,15 +8,18 @@ export default function Hover3D({ children, intensity = 10 }) {
   
   const xTo = useRef(null);
   const yTo = useRef(null);
+  
+  const isEnabled = localStorage.getItem('enableCardAnimations') !== 'false';
 
   useGSAP(() => {
+    if (!isEnabled) return;
     // quickTo is highly performant for tracking mouse movements
     xTo.current = gsap.quickTo(innerRef.current, "rotationY", { ease: "power3", duration: 0.5 });
     yTo.current = gsap.quickTo(innerRef.current, "rotationX", { ease: "power3", duration: 0.5 });
   }, { scope: containerRef });
 
   const handleMouseMove = (e) => {
-    if (!innerRef.current) return;
+    if (!innerRef.current || !isEnabled || !xTo.current || !yTo.current) return;
     
     const rect = innerRef.current.getBoundingClientRect();
     
@@ -30,6 +33,7 @@ export default function Hover3D({ children, intensity = 10 }) {
   };
 
   const handleMouseLeave = () => {
+    if (!isEnabled) return;
     // Snap back to 0 with a nice elastic bounce
     gsap.to(innerRef.current, {
       rotationX: 0,

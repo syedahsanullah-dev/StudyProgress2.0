@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, LogOut, Database, Target, Calendar } from 'lucide-react';
+import { LayoutDashboard, BookOpen, LogOut, Database, Target, Calendar, Settings } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../firebase'; 
 import gsap from 'gsap';
@@ -16,6 +16,13 @@ export default function Sidebar() {
   const sidebarRef = useRef();
   
   useGSAP(() => {
+    const isEnabled = localStorage.getItem('enableSidebarAnimations') !== 'false';
+    
+    if (!isEnabled) {
+      gsap.set(".sidebar-item", { opacity: 1, x: 0 });
+      return;
+    }
+
     gsap.fromTo(
       ".sidebar-item", 
       { opacity: 0, x: -20 }, 
@@ -82,7 +89,28 @@ export default function Sidebar() {
           ))}
         </div>
 
-        <div className="sm:mt-auto sidebar-item">
+        <div className="sm:mt-auto flex flex-col gap-2 sidebar-item">
+          <Magnetic>
+            <NavLink 
+              to="/settings"
+              onClick={(e) => {
+                e.preventDefault();
+                if (window.location.pathname !== "/settings") {
+                  transitionNavigate("/settings");
+                }
+              }}
+              title="Settings"
+              className={({ isActive }) => 
+                `p-3 rounded-xl transition-all duration-200 flex items-center justify-center w-full ${
+                  isActive 
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
+                    : 'text-slate-400 hover:bg-slate-800 hover:text-slate-200'
+                }`
+              }
+            >
+              <Settings size={24} />
+            </NavLink>
+          </Magnetic>
           <Magnetic>
             <button 
               onClick={handleLogout}

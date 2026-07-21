@@ -11,13 +11,18 @@ import SubjectDetail from './pages/SubjectDetail';
 import BulkEntry from './pages/BulkEntry';
 import TargetCalculator from './pages/TargetCalculator';
 import Datesheet from './pages/Datesheet';
+import Settings from './pages/Settings';
 import PageTransition, { LoadingScreen } from './components/ui/PageTransition';
 import BackgroundParallax from './components/ui/BackgroundParallax';
+import InitialLoader from './components/ui/InitialLoader';
 import useStore from './store/useStore';
 
 export default function App() {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+  const [showInitialLoader, setShowInitialLoader] = useState(() => {
+    return sessionStorage.getItem('hasSeenInitialLoader') !== 'true';
+  });
 
   // Listen for Firebase login state changes
   useEffect(() => {
@@ -30,26 +35,22 @@ export default function App() {
         useStore.getState().clearStore();
       }
       
-      setLoading(false);
+      setAuthLoading(false);
     });
     return () => unsubscribe();
   }, []);
 
-  // Show the cinematic transition screen while checking auth
-  if (loading) {
-    return (
-      <Router>
-        <BackgroundParallax />
-        <LoadingScreen />
-      </Router>
-    );
-  }
-
   return (
     <Router>
       <BackgroundParallax />
-      <PageTransition>
-        <Routes>
+      
+      {showInitialLoader && <InitialLoader onComplete={() => setShowInitialLoader(false)} />}
+      
+      {authLoading ? (
+        <LoadingScreen />
+      ) : (
+        <PageTransition skipInitialAnimation={showInitialLoader}>
+          <Routes>
         {/* Public Route */}
         <Route 
           path="/login" 
@@ -85,6 +86,11 @@ export default function App() {
           element={user ? <Datesheet /> : <Navigate to="/login" />} 
         />
         
+        <Route 
+          path="/settings" 
+          element={user ? <Settings /> : <Navigate to="/login" />} 
+        />
+        
         {/* Fallback Route */}
         <Route 
           path="*" 
@@ -93,7 +99,8 @@ export default function App() {
 
       
       </Routes>
-      </PageTransition>
+        </PageTransition>
+      )}
     </Router>
   );
 }
