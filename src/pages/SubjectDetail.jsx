@@ -58,6 +58,12 @@ export default function SubjectDetail() {
   const [editNoteTitle, setEditNoteTitle] = useState('');
   const [editNoteContent, setEditNoteContent] = useState('');
 
+  // Custom Requirements State
+  const [newCustomLabel, setNewCustomLabel] = useState('');
+  const [newCustomTotal, setNewCustomTotal] = useState('');
+  const [isAddingCustom, setIsAddingCustom] = useState(false);
+  const customRequirements = subject?.customRequirements || [];
+
   const notesArray = useMemo(() => {
     return Array.isArray(subject?.notes) 
       ? subject.notes 
@@ -207,6 +213,68 @@ export default function SubjectDetail() {
     }
   };
 
+  const handleAddCustomRequirement = async () => {
+    if (!newCustomLabel.trim() || !newCustomTotal || isAddingCustom) return;
+    const total = parseInt(newCustomTotal);
+    if (isNaN(total) || total <= 0) return;
+
+    setIsAddingCustom(true);
+    try {
+      const newReq = {
+        id: Date.now().toString(),
+        label: newCustomLabel.trim(),
+        current: 0,
+        total: total
+      };
+      const subjectRef = doc(db, 'subjects', id);
+      await updateDoc(subjectRef, {
+        customRequirements: [...customRequirements, newReq]
+      });
+      setNewCustomLabel('');
+      setNewCustomTotal('');
+    } catch (error) {
+      console.error("Failed to add custom requirement:", error);
+    } finally {
+      setIsAddingCustom(false);
+    }
+  };
+
+  const handleCustomProgressUpdate = async (reqId, change) => {
+    if (isUpdating) return;
+    
+    const reqIndex = customRequirements.findIndex(r => r.id === reqId);
+    if (reqIndex === -1) return;
+
+    const req = customRequirements[reqIndex];
+    const newVal = req.current + change;
+    
+    if (newVal < 0 || newVal > req.total) return;
+
+    setIsUpdating(true);
+    try {
+      const updatedReqs = [...customRequirements];
+      updatedReqs[reqIndex] = { ...req, current: newVal };
+
+      const subjectRef = doc(db, 'subjects', id);
+      await updateDoc(subjectRef, { customRequirements: updatedReqs });
+    } catch (error) {
+      console.error("Failed to update custom requirement:", error);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  const handleDeleteCustomRequirement = async (reqId) => {
+    if (!window.confirm("Are you sure you want to delete this custom requirement?")) return;
+    try {
+      const updatedReqs = customRequirements.filter(r => r.id !== reqId);
+      const subjectRef = doc(db, 'subjects', id);
+      await updateDoc(subjectRef, { customRequirements: updatedReqs });
+    } catch (error) {
+      console.error("Failed to delete custom requirement:", error);
+    }
+  };
+
   const getLinkIcon = (type) => {
     if (type === 'youtube') return <Video size={18} className="text-red-400" />;
     if (type === 'github') return <Code size={18} className="text-slate-200" />;
@@ -346,6 +414,61 @@ export default function SubjectDetail() {
                     onDecrement={() => handleProgressUpdate('understandingCurrent', -1)}
                     isUpdating={isUpdating}
                   />
+
+                  {customRequirements.length > 0 && (
+                    <div className="pt-4 border-t border-white/10 space-y-7">
+                      <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Personal Goals</h3>
+                      {customRequirements.map((req) => (
+                        <div key={req.id} className="flex items-center gap-4 group">
+                          <div className="flex-1 min-w-0">
+                            <ProgressBar 
+                              current={req.current} 
+                              total={req.total} 
+                              label={req.label} 
+                              onIncrement={() => handleCustomProgressUpdate(req.id, 1)}
+                              onDecrement={() => handleCustomProgressUpdate(req.id, -1)}
+                              isUpdating={isUpdating}
+                            />
+                          </div>
+                          <button
+                            onClick={() => handleDeleteCustomRequirement(req.id)}
+                            className="flex-shrink-0 p-2 text-slate-500 hover:text-red-400 hover:bg-slate-800/50 rounded-xl opacity-0 group-hover:opacity-100 transition-all mt-1"
+                            title="Delete custom goal"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
+                {/* Add Custom Requirement Form */}
+                <div className="mt-6 pt-6 border-t border-white/10">
+                  <p className="text-xs text-slate-400 mb-3">Add a personal tracking goal (e.g., MCQs, Past Papers). These do not affect your overall progress.</p>
+                  <div className="flex gap-2">
+                    <input 
+                      value={newCustomLabel}
+                      onChange={(e) => setNewCustomLabel(e.target.value)}
+                      placeholder="Goal Label"
+                      className="flex-1 bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    />
+                    <input 
+                      type="number"
+                      value={newCustomTotal}
+                      onChange={(e) => setNewCustomTotal(e.target.value)}
+                      placeholder="Total"
+                      min="1"
+                      className="w-20 bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-indigo-500"
+                    />
+                    <button 
+                      onClick={handleAddCustomRequirement}
+                      disabled={!newCustomLabel.trim() || !newCustomTotal || isAddingCustom}
+                      className="px-3 py-2 bg-indigo-500/20 hover:bg-indigo-500 hover:text-white text-indigo-400 rounded-lg text-sm font-semibold transition-colors disabled:opacity-50 flex items-center justify-center min-w-[40px]"
+                    >
+                      {isAddingCustom ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
+                    </button>
+                  </div>
                 </div>
               </div>
 
