@@ -8,10 +8,9 @@ import { BookOpen, Terminal, TrendingUp, Loader2, Award, GraduationCap, BarChart
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, LineChart, Line, CartesianGrid } from 'recharts';
 import gsap from 'gsap';
 import { useGSAP } from '@gsap/react';
-import { Draggable } from 'gsap/Draggable';
 import useStore from '../store/useStore';
 
-gsap.registerPlugin(useGSAP, Draggable);
+gsap.registerPlugin(useGSAP);
 
 export default function Dashboard() {
   const { subjects, assessments, semesters, activeSemesterId, setActiveSemester, loading } = useStore();
@@ -25,22 +24,7 @@ export default function Dashboard() {
 
     const tl = gsap.timeline({ 
       defaults: { ease: "power3.out" }, 
-      delay: 0.8,
-      onComplete: () => {
-        Draggable.create(".dashboard-card", {
-          type: "x,y",
-          edgeResistance: 0.65,
-          onRelease: function() {
-            gsap.to(this.target, { 
-              x: 0, 
-              y: 0, 
-              delay: 1.5,
-              duration: 0.8, 
-              ease: "elastic.out(1, 0.4)" 
-            });
-          }
-        });
-      }
+      delay: 0.8
     });
 
     tl.fromTo(".dashboard-card", 

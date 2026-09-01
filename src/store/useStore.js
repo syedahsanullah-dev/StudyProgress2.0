@@ -224,6 +224,46 @@ const useStore = create((set, get) => ({
     }
   },
 
+  // Add an assessment
+  addAssessment: async (assessmentData) => {
+    const uid = auth.currentUser?.uid;
+    if (!uid) return null;
+
+    const newAssessment = {
+      subjectId: assessmentData.subjectId,
+      userId: uid,
+      title: assessmentData.title?.trim() || 'Untitled Assessment',
+      type: assessmentData.type || 'Quiz',
+      scoreReceived: Number(assessmentData.scoreReceived) || 0,
+      totalPossibleScore: Number(assessmentData.totalPossibleScore) || 100,
+      createdAt: serverTimestamp()
+    };
+
+    const docRef = await addDoc(collection(db, 'assessments'), newAssessment);
+    return docRef.id;
+  },
+
+  // Update an existing assessment
+  updateAssessment: async (assessmentId, updates) => {
+    if (!assessmentId) return;
+    const cleanedUpdates = {};
+    if (updates.title !== undefined) cleanedUpdates.title = updates.title.trim();
+    if (updates.type !== undefined) cleanedUpdates.type = updates.type;
+    if (updates.scoreReceived !== undefined) cleanedUpdates.scoreReceived = Number(updates.scoreReceived);
+    if (updates.totalPossibleScore !== undefined) cleanedUpdates.totalPossibleScore = Number(updates.totalPossibleScore);
+    if (updates.subjectId !== undefined) cleanedUpdates.subjectId = updates.subjectId;
+    cleanedUpdates.updatedAt = serverTimestamp();
+
+    const astRef = doc(db, 'assessments', assessmentId);
+    await updateDoc(astRef, cleanedUpdates);
+  },
+
+  // Delete an assessment
+  deleteAssessment: async (assessmentId) => {
+    if (!assessmentId) return;
+    await deleteDoc(doc(db, 'assessments', assessmentId));
+  },
+
   // Full Firestore Data Backup & Download Function
   downloadAllData: async () => {
     const uid = auth.currentUser?.uid;

@@ -9,11 +9,11 @@ import EditSettingsModal from '../components/forms/EditSettingsModal';
 import WhatIfCalculator from '../components/ui/WhatIfCalculator';
 import DOMPurify from 'dompurify';
 import { db } from '../../firebase';
-import { doc, collection, query, where, updateDoc, writeBatch, getDocs } from 'firebase/firestore';
+import { doc, collection, query, where, updateDoc, writeBatch, getDocs, deleteDoc } from 'firebase/firestore';
 import { 
   ArrowLeft, Terminal, BookOpen, Link as LinkIcon, 
   Plus, FileText, Video, Code, Loader2, Trash2, Settings,
-  HelpCircle, MessageSquare, AlertCircle, Star, Save, FileEdit, Check
+  HelpCircle, MessageSquare, AlertCircle, Star, Save, FileEdit, Check, Sparkles, Pencil
 } from 'lucide-react';
 import useStore from '../store/useStore';
 
@@ -50,6 +50,7 @@ export default function SubjectDetail() {
   const [isLinkModalOpen, setIsLinkModalOpen] = useState(false);
   const [isGradeModalOpen, setIsGradeModalOpen] = useState(false);
   const [isEditSettingsOpen, setIsEditSettingsOpen] = useState(false);
+  const [selectedAssessment, setSelectedAssessment] = useState(null);
 
   const [newNoteTitle, setNewNoteTitle] = useState('');
   const [newNoteContent, setNewNoteContent] = useState('');
@@ -72,6 +73,34 @@ export default function SubjectDetail() {
         ? [{ id: 'legacy-note', title: 'Imported Note', content: subject.notes, createdAt: new Date().toISOString() }]
         : [];
   }, [subject]);
+
+  const handleOpenAddGrade = () => {
+    setSelectedAssessment(null);
+    setIsGradeModalOpen(true);
+  };
+
+  const handleOpenEditGrade = (assessment) => {
+    setSelectedAssessment(assessment);
+    setIsGradeModalOpen(true);
+  };
+
+  const handleDeleteAssessment = async (assessmentId, assessmentTitle) => {
+    const confirmText = assessmentTitle 
+      ? `Are you sure you want to delete "${assessmentTitle}"? This will recalculate your GPA.` 
+      : "Are you sure you want to delete this assessment? This will recalculate your GPA.";
+    if (!window.confirm(confirmText)) return;
+
+    try {
+      if (useStore.getState().deleteAssessment) {
+        await useStore.getState().deleteAssessment(assessmentId);
+      } else {
+        await deleteDoc(doc(db, 'assessments', assessmentId));
+      }
+    } catch (err) {
+      console.error("Error deleting assessment:", err);
+      alert("Failed to delete assessment.");
+    }
+  };
 
   const handleDeleteNote = async (noteId) => {
     if (!window.confirm("Are you sure you want to delete this note?")) return;
@@ -288,7 +317,8 @@ export default function SubjectDetail() {
       case 'Assignment': return <FileText size={18} className="text-emerald-400" />;
       case 'GDB': return <MessageSquare size={18} className="text-purple-400" />;
       case 'Midterm': return <AlertCircle size={18} className="text-amber-400" />;
-      case 'Final': return <Star size={18} className="text-red-400" />;
+      case 'Final': return <Star size={18} className="text-rose-400" />;
+      case 'Project': return <Sparkles size={18} className="text-cyan-400" />;
       default: return <FileText size={18} className="text-slate-400" />;
     }
   };
@@ -634,39 +664,93 @@ export default function SubjectDetail() {
             </div>
 
             <div className="space-y-6 h-fit">
-              <div className="bg-white/5 border border-white/10 rounded-3xl p-6 shadow-xl">
+              <div className="bg-white/5 border border-white/10 rounded-3xl p-6 shadow-xl backdrop-blur-sm">
                 <div className="flex items-center justify-between mb-6">
-                  <h2 className="text-lg font-bold text-white">Assessments</h2>
+                  <div className="flex items-center gap-2.5">
+                    <h2 className="text-lg font-bold text-white">Assessments</h2>
+                    <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                      {assessments.length}
+                    </span>
+                  </div>
                   <button 
-                    onClick={() => setIsGradeModalOpen(true)}
-                    className="p-2 bg-indigo-500/20 hover:bg-indigo-500 hover:text-white text-indigo-400 rounded-lg transition-colors"
+                    onClick={handleOpenAddGrade}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-500/20 hover:bg-indigo-500 hover:text-white text-indigo-400 rounded-xl transition-all text-xs font-semibold shadow-sm cursor-pointer"
+                    title="Add new assessment"
                   >
-                    <Plus size={18} />
+                    <Plus size={16} />
+                    <span>Add</span>
                   </button>
                 </div>
 
                 {assessments.length === 0 ? (
-                  <p className="text-slate-500 text-sm">No grades recorded yet.</p>
+                  <div className="p-6 bg-slate-800/30 border border-slate-700/30 rounded-2xl text-center space-y-3">
+                    <p className="text-slate-400 text-sm">No grades recorded yet.</p>
+                    <button
+                      onClick={handleOpenAddGrade}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-slate-800 hover:bg-slate-700 text-indigo-400 text-xs font-medium rounded-xl border border-slate-700 transition-colors cursor-pointer"
+                    >
+                      <Plus size={14} /> Record First Grade
+                    </button>
+                  </div>
                 ) : (
                   <div className="space-y-3">
                     {assessments.map(item => {
-                      const percentage = (item.scoreReceived / item.totalPossibleScore) * 100;
+                      const percentage = item.totalPossibleScore > 0 
+                        ? (item.scoreReceived / item.totalPossibleScore) * 100 
+                        : 0;
                       const isGood = percentage >= 80;
+                      const isPassing = percentage >= 50;
                       
                       return (
-                        <div key={item.id} className="p-4 bg-slate-800/50 border border-slate-700/50 rounded-2xl flex items-center justify-between gap-3">
-                          <div className="p-2 bg-slate-900/50 rounded-xl border border-slate-700/30">
+                        <div 
+                          key={item.id} 
+                          className="group relative p-3.5 sm:p-4 bg-slate-800/50 hover:bg-slate-800/80 border border-slate-700/50 hover:border-slate-600/70 rounded-2xl flex items-center justify-between gap-3 transition-all duration-200"
+                        >
+                          <div className="p-2.5 bg-slate-900/60 rounded-xl border border-slate-700/40 shrink-0">
                             {getAssessmentIcon(item.type)}
                           </div>
+                          
                           <div className="flex-1 min-w-0">
-                            <h4 className="text-slate-200 font-semibold text-sm truncate">{item.title}</h4>
-                            <span className="text-xs text-slate-400 uppercase tracking-wider font-bold mt-0.5 block">{item.type}</span>
-                          </div>
-                          <div className="text-right whitespace-nowrap">
-                            <div className={`text-lg font-extrabold ${isGood ? 'text-emerald-400' : 'text-amber-400'}`}>
-                              {item.scoreReceived}<span className="text-sm text-slate-500 font-medium">/{item.totalPossibleScore}</span>
+                            <h4 className="text-slate-200 font-semibold text-sm truncate group-hover:text-white transition-colors">
+                              {item.title}
+                            </h4>
+                            <div className="flex items-center gap-2 mt-0.5">
+                              <span className="text-[11px] text-slate-400 uppercase tracking-wider font-bold">
+                                {item.type || 'Quiz'}
+                              </span>
                             </div>
-                            <span className="text-xs text-slate-500 font-medium">{percentage.toFixed(0)}%</span>
+                          </div>
+
+                          <div className="flex items-center gap-2.5 sm:gap-3">
+                            <div className="text-right whitespace-nowrap">
+                              <div className={`text-base sm:text-lg font-extrabold ${
+                                isGood ? 'text-emerald-400' : isPassing ? 'text-amber-400' : 'text-rose-400'
+                              }`}>
+                                {item.scoreReceived}
+                                <span className="text-xs sm:text-sm text-slate-500 font-medium">/{item.totalPossibleScore}</span>
+                              </div>
+                              <span className="text-[11px] text-slate-500 font-medium block">
+                                {percentage.toFixed(0)}%
+                              </span>
+                            </div>
+
+                            {/* Action Buttons: Edit and Delete */}
+                            <div className="flex items-center gap-1 opacity-90 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity ml-1">
+                              <button
+                                onClick={() => handleOpenEditGrade(item)}
+                                className="p-1.5 text-slate-400 hover:text-indigo-400 hover:bg-indigo-500/10 rounded-lg transition-colors cursor-pointer"
+                                title="Edit assessment"
+                              >
+                                <FileEdit size={16} />
+                              </button>
+                              <button
+                                onClick={() => handleDeleteAssessment(item.id, item.title)}
+                                className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors cursor-pointer"
+                                title="Delete assessment"
+                              >
+                                <Trash2 size={16} />
+                              </button>
+                            </div>
                           </div>
                         </div>
                       );
@@ -689,8 +773,12 @@ export default function SubjectDetail() {
       />
       <AddGradeModal 
         isOpen={isGradeModalOpen} 
-        onClose={() => setIsGradeModalOpen(false)} 
+        onClose={() => {
+          setIsGradeModalOpen(false);
+          setSelectedAssessment(null);
+        }} 
         subjectId={id} 
+        assessmentToEdit={selectedAssessment}
       />
       <EditSettingsModal
         isOpen={isEditSettingsOpen}
