@@ -6,6 +6,7 @@ import { auth } from '../firebase';
 // Page Imports (We will build these next)
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
+import CGPAProgress from './pages/CGPAProgress';
 import SubjectsList from './pages/SubjectsList';
 import SubjectDetail from './pages/SubjectDetail';
 import BulkEntry from './pages/BulkEntry';
@@ -61,6 +62,19 @@ export default function App() {
         <Route 
           path="/dashboard" 
           element={user ? <Dashboard /> : <Navigate to="/login" />} 
+        />
+
+        <Route 
+          path="/cgpa-progress" 
+          element={user ? <CGPAProgress /> : <Navigate to="/login" />} 
+        />
+        <Route 
+          path="/progress" 
+          element={<Navigate to="/cgpa-progress" />} 
+        />
+        <Route 
+          path="/cgpa" 
+          element={<Navigate to="/cgpa-progress" />} 
         />
 
         <Route 

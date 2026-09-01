@@ -261,15 +261,18 @@ export default function Dashboard() {
             </div>
 
             {/* 2. Degree Cumulative CGPA & Credits */}
-            <div className="dashboard-card opacity-0 col-span-1 bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl p-6 flex flex-col justify-between shadow-xl">
+            <div 
+              onClick={() => transitionNavigate('/cgpa-progress')}
+              className="dashboard-card opacity-0 col-span-1 bg-white/5 hover:bg-white/[0.08] backdrop-blur-md border border-white/10 hover:border-indigo-500/40 rounded-3xl p-6 flex flex-col justify-between shadow-xl cursor-pointer transition-all group"
+            >
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-2 text-indigo-400">
+                  <div className="flex items-center gap-2 text-indigo-400 group-hover:text-indigo-300 transition-colors">
                     <GraduationCap size={20} />
                     <span className="text-xs font-bold uppercase tracking-wider text-slate-300">Degree CGPA</span>
                   </div>
-                  <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                    Overall
+                  <span className="text-[11px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 group-hover:bg-indigo-500 group-hover:text-white transition-colors">
+                    View Progress →
                   </span>
                 </div>
 
@@ -299,8 +302,16 @@ export default function Dashboard() {
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
                   <BarChart2 size={18} className="text-indigo-400" />
-                  <h2 className="text-sm font-bold text-white tracking-wide">
-                    {chartView === 'progress' ? 'Subject Completion (%)' : 'Multi-Semester SGPA Progression'}
+                  <h2 className="text-sm font-bold text-white tracking-wide flex items-center gap-1.5">
+                    <span>{chartView === 'progress' ? 'Subject Completion (%)' : 'Multi-Semester SGPA Progression'}</span>
+                    {chartView === 'trends' && (
+                      <button
+                        onClick={() => transitionNavigate('/cgpa-progress')}
+                        className="text-[11px] text-indigo-400 hover:text-indigo-300 underline font-normal ml-1 cursor-pointer"
+                      >
+                        Full Details →
+                      </button>
+                    )}
                   </h2>
                 </div>
 

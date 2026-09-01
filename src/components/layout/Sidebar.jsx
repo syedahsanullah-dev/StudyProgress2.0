@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, BookOpen, LogOut, Database, Target, Calendar, Settings } from 'lucide-react';
+import { LayoutDashboard, TrendingUp, BookOpen, LogOut, Database, Target, Calendar, Settings } from 'lucide-react';
 import { signOut } from 'firebase/auth';
 import { auth } from '../../../firebase'; 
 import gsap from 'gsap';
@@ -32,6 +32,7 @@ export default function Sidebar() {
   
   const navItems = [
     { icon: <LayoutDashboard size={24} />, label: 'Dashboard', path: '/dashboard' },
+    { icon: <TrendingUp size={24} />, label: 'CGPA Progress', path: '/cgpa-progress' },
     { icon: <BookOpen size={24} />, label: 'Subjects', path: '/subjects' },
     { icon: <Calendar size={24} />, label: 'Datesheet', path: '/datesheet' },
     { icon: <Target size={24} />, label: 'Sandbox', path: '/calculator' },
